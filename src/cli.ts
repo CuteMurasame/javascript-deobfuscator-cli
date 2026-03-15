@@ -4,7 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { program } from 'commander';
 
-const version = require('../package.json').version;
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf-8'));
+const version: string = packageJson.version;
 
 program
   .name('js-deobfuscator')
@@ -53,16 +54,19 @@ const config = {
   verbose: options.verbose || false,
   isModule: options.module || false,
   arrays: {
+    // Both controlled by --no-unpack-arrays since removing without unpacking has no effect
     unpackArrays: options.unpackArrays,
     removeArrays: options.unpackArrays,
   },
   proxyFunctions: {
+    // Both controlled by --no-remove-proxy-functions since replacing without removing is incomplete
     replaceProxyFunctions: options.removeProxyFunctions,
     removeProxyFunctions: options.removeProxyFunctions,
   },
   expressions: {
     simplifyExpressions: options.simplifyExpressions,
     removeDeadBranches: options.removeDeadBranches,
+    // String operations are a form of expression simplification
     undoStringOperations: options.simplifyExpressions,
   },
   miscellaneous: {
